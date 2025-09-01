@@ -1,30 +1,30 @@
-# usa a imagem oficial do apache
+# Usa a imagem oficial do Apache com PHP 8.2
 FROM php:8.2-apache
 
-# Porta usada pela render
-  ENV PORT=8080
+# Porta usada pela Render
+ENV PORT=8080
 
-# ativa o mod_rewrite para URLS amigáveis
-  RUN a2enmod rewrite
+# Ativa o mod_rewrite para URLs amigáveis
+RUN a2enmod rewrite
 
-#Copia o código da aplicação
-  COPY . /var/www/html/
+# Copia o código da aplicação
+COPY . /var/www/html/
 
+# Corrige permissões
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
-# Corrige permissôes
-  RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+# Ajusta a porta usada pelo Apache
+RUN sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf && \
+    sed -i "s/<VirtualHost \*:80>/<VirtualHost \*:${PORT}>/" /etc/apache2/sites-available/000-default.conf
 
-  RUN sed -i "s/listen 80/Listen ${PORT}/" /etec/apache2/ports.conf && \
-  sed -i "s/<VirtualHost \*:80>/<VirtualHost \*${PORT}>/" /etc/apache2/sites-available/000-default.conf
+# Permite acesso ao diretório da aplicação
+RUN echo '<Directory /var/www/html>' >> /etc/apache2/apache2.conf && \
+    echo '    Options Indexes FollowSymLinks' >> /etc/apache2/apache2.conf && \
+    echo '    Require all granted' >> /etc/apache2/apache2.conf && \
+    echo '</Directory>' >> /etc/apache2/apache2.conf
 
-  #Permite acesso ao diretório
-  RUN echo '<Directory /var/www/html>' >> /etc/apache2/apache2.conf && \
-  echo ' Options Indexes FollowSysLinks' >> /etc/apache2/apache2.conf && \
-  echo ' Require all granted' >> /etc/apache2/apache2.conf && \
-  echo '<Directory>' >> /etc/apache2/apache2.conf
+# Expõe a porta correta
+EXPOSE ${PORT}
 
-  # Expõe a porta correta 
-  EXPOSE ${PORT}
-
-  #Inicia o Apache
-  CMD ["apache2-foreground"]
+# Inicia o Apache
+CMD ["apache2-foreground"]
