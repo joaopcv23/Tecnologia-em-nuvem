@@ -1,22 +1,28 @@
+#Usa a imagem oficial do PHP com Apache
 FROM php:8.2-apache
 
+#Porta usada pela render
 ENV PORT=8080
 
+#Ativa o mod_rewrite para URLS amigáveis
 RUN a2enmod rewrite
 
+#Copia o código da aplicação
 COPY . var/www/html/
 
+#Corrige permissões
 RUN chown -R www-data /var/ww/html && chmod -R /var/www/html
 
+#Corrige configurações de porta
 RUN sed -i "s/Listen 80/Listen $(PORT)/" /etc/apache2/ports.conf && \
     sed -i "s/<VirtualHost \*:80>/ <VirtualHost \*:$(PORT)>/" /etc/apache2/sites-available/000-default.conf
-
+#Permite ace3sso aos relatórios
     RUN echo '<Diretory /var/www/html>' >> /etc/apache2/apache2.conf && \
        echo  '  Options Indexes FollowSymLinks' >> etec/apache2//apache2.conf && \
        echo  '  AllowOverride All' >> /etc/apache2/apache2.conf && \
        echo  '  Require all granted' >> /etc/apache2/apache2.conf && \
        echo  '</Directory>' >> /etc/apache2/apache2.conf 
-
+#Expões a porta correta
        EXPOSE ${PORT}
-
+#Inicia o apache
        CMD ["apache2-foreground"]
