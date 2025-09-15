@@ -7,7 +7,7 @@
     <title>Formulário de Contato</title>
 </head>
 <body>
-    <h1>Fale Conosco, seu safadinho</h1>
+    <h1>Fale Conosco</h1>
 
     <form method="POST">
         <label for="nome">Nome:</label><br>
@@ -29,7 +29,7 @@
             $email = htmlspecialchars($_POST["email"]);
             $mensagem = htmlspecialchars($_POST["mensagem"]);
 
-            //Exibe os dados (em uma aplicação real, voc~e poderia enviar por email)
+            //Exibe os dados (em uma aplicação real, voc~e poderia salvar ou enviar por email)
             echo "<h2>Dados Recebidos:</h2>";
             echo "<p><strong>Nome:</strong> $nome</p>";
             echo "<p><strong>Email:</strong> $email</p>";
